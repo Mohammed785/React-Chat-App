@@ -1,5 +1,5 @@
 import {Box, Grid, Paper, Typography,Link } from "@mui/material"
-import LoginForm from "../components/AuthForm"
+import AuthForm from "../components/AuthForm"
 import {Link as RouterLink} from "react-router-dom"
 
 function Login(){
@@ -14,7 +14,7 @@ function Login(){
                 <Typography align="center" variant="h4" sx={{marginBottom:"8px"}}>
                     Login
                 </Typography>
-                    <LoginForm auth="login"/>
+                    <AuthForm auth="login"/>
                 <Box sx={{ marginTop: "6px" }}>
                     <Link component={RouterLink} to="/register">Need account? Register</Link>
                 </Box>
