@@ -8,7 +8,13 @@ export const roomRouter = Router();
 roomRouter.get("/rooms",async(req,res)=>{
     const rooms = await Room.find({members:{$elemMatch:{
         member:req.user?._id
-    }}}).populate("members.member")
+    }}})
+    for (const room of rooms) {
+        if(!room.is_group){
+            await room.populate("members.member")
+        }
+        
+    }
     return res.json({rooms})
 })
 
@@ -48,4 +54,14 @@ roomRouter.post("/join",async(req,res)=>{
     const {roomId,userId} = req.query
     const room = await Room.findByIdAndUpdate(roomId,{$push:{members:{member:userId}}})
     return res.json({room})
+})
+
+roomRouter.get("/:id/members",async(req,res)=>{
+    const roomId = req.params.id
+    const room = await Room.findById(roomId).populate("members.member")
+    if(!room){
+        return res.status(404).json({msg:"Room not Found"})
+    }
+    const members = room.members
+    return res.json({members})
 })

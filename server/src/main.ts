@@ -14,6 +14,7 @@ import { authMiddleware } from "./middleware/authMiddleware"
 import { roomRouter } from "./routes/room"
 import { userRouter } from "./routes/user"
 import cors from "cors"
+import { join } from "path"
 
 let RedisStore = connectRedis(session)
 let redisClient = createClient({legacyMode:true})
@@ -21,6 +22,7 @@ let redisClient = createClient({legacyMode:true})
 
 const app = express()
 app.use(cors({credentials:true,origin:true}))
+app.use("/static",express.static(join(__dirname,"..","public")))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 setPassport(passport)
@@ -32,6 +34,9 @@ app.use(session({
     name:"sid",
     cookie:{secure:process.env.NODE_ENV==="production",httpOnly:true,maxAge:1000*60*60*48}   
 }))
+if(process.env.NODE_ENV==="production"){
+    app.set("trust proxy",1)
+}
 app.use(passport.initialize())
 app.use(passport.session())
 app.use("/",authRouter)
