@@ -5,7 +5,9 @@ interface IMember {
     privilege: String;
 }
 
-export interface IRoom{
-    members:IMember[]
-    name?:String
+export interface IRoom {
+    members: IMember[];
+    name?: String;
+    avatar?: String;
+    is_group: boolean;
 }

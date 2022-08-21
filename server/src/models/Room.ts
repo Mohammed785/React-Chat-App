@@ -16,6 +16,14 @@ const RoomSchema = new Schema<IRoom>(
         name: {
             type: String,
         },
+        avatar: {
+            type: String,
+            default:"default.jpg"
+        },
+        is_group:{
+            type:Boolean,
+            default:false
+        }
     },
     { timestamps: true }
 );
