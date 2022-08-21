@@ -1,5 +1,6 @@
 import {Router} from "express"
 import passport from "passport"
+import { authMiddleware } from "../middleware/authMiddleware"
 import User from "../models/User"
 
 export const authRouter = Router()
@@ -18,10 +19,8 @@ authRouter.post("/register",async(req,res)=>{
     return res.status(201).json({user})
 })
 
-authRouter.post("/logout",async(req,res)=>{
-    if(!req.isAuthenticated()){
-        return res.status(401).json({msg:"You are already logged out"})
-    }
+authRouter.post("/logout",authMiddleware,async(req,res)=>{
+    await User.findByIdAndUpdate(req.user?._id,{last_seen:new Date()})
     req.logout((err)=>{
         if(err){
             return res.status(500).json({msg:"Something went wrong"})
