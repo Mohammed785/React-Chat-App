@@ -5,6 +5,7 @@ import { IRoom } from "../@types/room"
 import { useAuthContext } from "../context/authContext";
 import moment from "moment"
 import { IUser } from "../@types/user";
+import { useChatContext } from "../context/chatContext";
 
 const StyledBadge = styled(Badge, { shouldForwardProp: (prop) => prop !== "type" })<{ type: string }>(({ theme, type }) => ({
     '& .MuiBadge-badge': {
@@ -38,6 +39,7 @@ const StyledBadge = styled(Badge, { shouldForwardProp: (prop) => prop !== "type"
 function Room({ room }: { room: IRoom }){
     const [friend, setFriend] = useState<IUser | undefined>(undefined)
     const {user} = useAuthContext()!
+    const {selectedRoom,setSelectedRoom} = useChatContext()
     const getFriendInfo = ()=>{
         const friend = room.members.filter(member=>{
             return member.member._id!==user!._id
@@ -50,14 +52,14 @@ function Room({ room }: { room: IRoom }){
         }
     },[])
     return <>
-        <Box component="div" className="msg">
+        <Box component="div" onClick={()=>{setSelectedRoom(room)}} className={`msg ${(selectedRoom&&room._id===selectedRoom._id)&&"active"}`}>
             <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
                 type="online"
             >
-                <Avatar alt="avatar" src={`http://localhost:8000/static/${room.is_group?room.avatar:friend?.avatar}`} />
+                <Avatar alt="avatar" src={`${process.env.REACT_APP_STATIC_PATH}${room.is_group?room.avatar:friend?.avatar}`} />
             </StyledBadge>
             <Box component="div" className="msg-detail">
                 <Box component="div" className="msg-username">
