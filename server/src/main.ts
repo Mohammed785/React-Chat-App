@@ -8,19 +8,21 @@ import setPassport from "./config/passport"
 import passport from "passport"
 import { authRouter } from "./routes/auth"
 import connectRedis from "connect-redis"
-import { createClient } from "redis"
 import { messageRouter } from "./routes/message"
 import { authMiddleware } from "./middleware/authMiddleware"
 import { roomRouter } from "./routes/room"
 import { userRouter } from "./routes/user"
 import cors from "cors"
+import {createServer} from "http"
+import {Server} from "socket.io"
 import { join } from "path"
-
+import {redisClient,setSocket} from "./socket"
 let RedisStore = connectRedis(session)
-let redisClient = createClient({legacyMode:true})
 
 
 const app = express()
+const server = createServer(app)
+const io = new Server(server,{cors:{origin:true}})
 app.use(cors({credentials:true,origin:true}))
 app.use("/static",express.static(join(__dirname,"..","public")))
 app.use(express.json())
@@ -48,7 +50,8 @@ const start = async () => {
         await connect(process.env.MONGO_URI);
         redisClient.on("error", (err) => console.log("REDIS: ", err));
         await redisClient.connect();
-        app.listen(8000, () => console.log("[SERVER] Started"));
+        setSocket(io)
+        server.listen(8000, () => console.log("[SERVER] Started"));
     } catch (error) {
         console.error(error);
     }
