@@ -17,17 +17,20 @@ function ChatArea(){
          console.error(error);         
       }
    }
+   const addMsg = (msg:IMessage)=>{
+      setMsgs([...msgs,msg])
+   }
    useEffect(()=>{
       selectedRoom && getChatMsgs()
    },[selectedRoom])
     return <>
         <div className="chat-area">
             {selectedRoom&&<>
-            <ChatHeader {...{roomName:selectedRoom.name}}/>
+            <ChatHeader/>
             <div className="chat-area-main">
                <MessagesArea msgs={msgs}/>
             </div>
-            <ChatForm/>
+            <ChatForm addMsg={addMsg}/>
             </>}
          </div>
     </>
