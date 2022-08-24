@@ -96,7 +96,7 @@ function AuthForm({auth}:{auth:"login"|"register"}){
                         }
 
                 </FormControl>
-                <Button variant="contained" type="submit" color="primary">Login</Button>
+                <Button variant="contained" type="submit" color="primary">{auth==="login"?"Login":"Register"}</Button>
             </Box>
         </form>
     </>

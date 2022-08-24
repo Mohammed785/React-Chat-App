@@ -22,6 +22,7 @@ function AuthProvider({children}:{children:JSX.Element}){
     }
     const logoutUser = ()=>{
         setCurrentUser(null)
+        window.localStorage.setItem("currentUser","null")
     }
     return <AuthContext.Provider value={{loginUser,logoutUser,user:currentUser}}>
         {children}

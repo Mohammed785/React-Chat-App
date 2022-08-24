@@ -49,7 +49,6 @@ const start = async () => {
     try {
         await connect(process.env.MONGO_URI);
         redisClient.on("error", (err) => console.log("REDIS: ", err));
-        await redisClient.connect();
         setSocket(io)
         server.listen(8000, () => console.log("[SERVER] Started"));
     } catch (error) {

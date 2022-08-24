@@ -18,7 +18,9 @@ function ChatArea(){
       }
    }
    const addMsg = (msg:IMessage)=>{
-      setMsgs([...msgs,msg])
+      setMsgs((prev)=>{
+         return [...prev,msg]
+      })
    }
    useEffect(()=>{
       selectedRoom && getChatMsgs()
@@ -28,7 +30,7 @@ function ChatArea(){
             {selectedRoom&&<>
             <ChatHeader/>
             <div className="chat-area-main">
-               <MessagesArea msgs={msgs}/>
+               <MessagesArea msgs={msgs} addMsg={addMsg}/>
             </div>
             <ChatForm addMsg={addMsg}/>
             </>}

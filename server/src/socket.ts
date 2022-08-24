@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
-import { createClient } from "redis"
+import Redis from "ioredis"
 import {ServerToClientEvents,ClientToServerEvents} from "./@types/socket"
-export const redisClient = createClient({legacyMode:true})
+export const redisClient = new Redis()
 
 class Connection{
     io: Server<ClientToServerEvents, ServerToClientEvents>;
@@ -11,7 +11,9 @@ class Connection{
         this.socket = socket
         socket.on("connected",(userId)=>{
             socket.data.userId= userId
-            redisClient.set(userId,JSON.stringify({socketId:socket.id,status:"online"})).then((value)=>{})
+            redisClient.set(userId,JSON.stringify({socketId:socket.id,status:"online"})).then((value)=>{
+                
+            })
         })
         socket.on("isConnected",(userId)=>{
             redisClient.get(userId).then((value)=>{
@@ -39,8 +41,6 @@ class Connection{
 
 export function setSocket(io:Server){
     io.on("connection",(socket)=>{
-        console.log(socket.id);
-        
         new Connection(io,socket)
     })
 }

@@ -6,6 +6,7 @@ import { useAuthContext } from "../context/authContext";
 import moment from "moment"
 import { IUser } from "../@types/user";
 import { useChatContext } from "../context/chatContext";
+import { useSocketContext } from "../context/socketContext";
 
 const StyledBadge = styled(Badge, { shouldForwardProp: (prop) => prop !== "type" })<{ type: string }>(({ theme, type }) => ({
     '& .MuiBadge-badge': {
@@ -38,26 +39,39 @@ const StyledBadge = styled(Badge, { shouldForwardProp: (prop) => prop !== "type"
 
 function Room({ room }: { room: IRoom }){
     const [friend, setFriend] = useState<IUser | undefined>(undefined)
+    const [friendStatus,setFriendStatus] = useState("idle")
     const {user} = useAuthContext()!
     const {selectedRoom,setSelectedRoom} = useChatContext()
+    const {socket} = useSocketContext()
     const getFriendInfo = ()=>{
         const friend = room.members.filter(member=>{
             return member.member._id!==user!._id
         })
         setFriend(friend[0].member)
     }
+    const selectRoom = ()=>{
+        setSelectedRoom(room)
+        socket?.emit("joinRoom",room._id)
+    }
     useEffect(()=>{
         if(!room.is_group){
             getFriendInfo()
+            socket?.on("IsConnected",setFriendStatus)
+            return ()=>{socket?.off("isConnected",setFriendStatus)}
         }
     },[])
+    useEffect(()=>{
+        if(friend){
+            socket?.emit("isConnected",friend?._id)
+        }
+    },[friend])
     return <>
-        <Box component="div" onClick={()=>{setSelectedRoom(room)}} className={`msg ${(selectedRoom&&room._id===selectedRoom._id)&&"active"}`}>
+        <Box component="div" onClick={()=>{selectRoom()}} className={`msg ${(selectedRoom&&room._id===selectedRoom._id)&&"active"}`}>
             <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
-                type="online"
+                type={friendStatus}
             >
                 <Avatar alt="avatar" src={`${process.env.REACT_APP_STATIC_PATH}${room.is_group?room.avatar:friend?.avatar}`} />
             </StyledBadge>
@@ -69,7 +83,7 @@ function Room({ room }: { room: IRoom }){
                     {/* <Typography variant="body1" className="msg-message">
                         last message
                     </Typography> */}
-                    {friend && <Typography variant="body1" className="msg-date">{moment(friend?.last_seen).fromNow()}</Typography>}
+                    {(friend&&friendStatus==="offline") && <Typography variant="body1" className="msg-date">{moment(friend?.last_seen).fromNow()}</Typography>}
                 </Box>
             </Box>
         </Box>
