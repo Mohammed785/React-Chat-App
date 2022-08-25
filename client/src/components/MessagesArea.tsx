@@ -1,10 +1,12 @@
 import { useEffect } from "react"
 import { IMessage } from "../@types/message"
+import { useChatContext } from "../context/chatContext"
 import { useSocketContext } from "../context/socketContext"
 import ChatMessage from "./ChatMsg"
 
-function MessagesArea({ msgs,addMsg }: { msgs: IMessage[],addMsg:(msg:IMessage)=>void }) {
+function MessagesArea() {
     const {socket} = useSocketContext()
+    const {msgs,addMsg} = useChatContext()
     useEffect(()=>{
         function add(msg:IMessage,room:string){
             addMsg(msg)
@@ -13,9 +15,11 @@ function MessagesArea({ msgs,addMsg }: { msgs: IMessage[],addMsg:(msg:IMessage)=
         return ()=>{socket?.off("msg",add)}
     },[])
     return <>
-    {msgs.map((msg)=>{
-        return <ChatMessage key={msg._id} msg={msg}/>
-    })}
+    <div className="chat-area-main">
+        {msgs.map((msg)=>{
+            return <ChatMessage key={msg._id} msg={msg}/>
+        })}
+    </div>
     </>
 }
 

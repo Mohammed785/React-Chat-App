@@ -9,13 +9,12 @@ import ThumbUp from "@mui/icons-material/ThumbUp"
 import Send from "@mui/icons-material/Send"
 import axiosClient from "../axios"
 import { useChatContext } from "../context/chatContext"
-import { IMessage } from "../@types/message"
 import { useAuthContext } from "../context/authContext"
 import { useSocketContext } from "../context/socketContext"
 
-function ChatForm({addMsg}:{addMsg:(msg:IMessage)=>void}){
+function ChatForm(){
    const [msg,setMsg] = useState("")
-   const {selectedRoom} = useChatContext()
+   const {selectedRoom,addMsg} = useChatContext()
    const {user} = useAuthContext()!
    const {socket} = useSocketContext()
    const handleSendMsg = async()=>{

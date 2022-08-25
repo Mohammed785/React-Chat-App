@@ -1,4 +1,4 @@
-import {Box,Avatar} from "@mui/material"
+import {Box,Avatar, Tooltip, IconButton} from "@mui/material"
 import img from "../img.jpg"
 import SearchForm from "./SearchForm"
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -19,7 +19,11 @@ function Header() {
         <Box component="div" className="header">
             <SearchForm/>
             <Box component="div" flexDirection="row" className="user-info">
-                <LogoutIcon onClick={handleLogout} sx={{cursor:"pointer"}}/>
+                <Tooltip title="logout">
+                    <IconButton onClick={handleLogout}>
+                        <LogoutIcon  sx={{color:"black"}}/>
+                    </IconButton>
+                </Tooltip>
                 <Avatar alt="avatar" src={img} sx={{ cursor: "pointer", marginLeft: "10px" }} />
             </Box>
         </Box>

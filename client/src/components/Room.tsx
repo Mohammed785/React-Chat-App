@@ -62,7 +62,7 @@ function Room({ room }: { room: IRoom }){
     },[])
     useEffect(()=>{
         if(friend){
-            socket?.emit("isConnected",friend?._id)
+            socket?.emit("isConnected",friend._id)
         }
     },[friend])
     return <>

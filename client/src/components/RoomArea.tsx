@@ -1,26 +1,10 @@
-import { useState,useEffect } from "react"
 import { Box } from "@mui/material"
-import axiosClient from "../axios"
 import Room from "./Room"
-import { IRoom } from "../@types/room"
 import AddChatDialog from "./AddChatDialog"
+import { useChatContext } from "../context/chatContext"
 
 function RoomArea() {
-    const [rooms,setRooms] = useState<IRoom[]>([])
-    const getRooms = async()=>{
-        try{    
-            const {data:{rooms}} = await axiosClient.get("/room/rooms")
-            setRooms(rooms)
-        }catch(error){
-            console.error(error)
-        }
-    }
-    const addRoom = (room:IRoom)=>{
-        setRooms([...rooms, room])
-    }
-    useEffect(()=>{
-        getRooms()
-    },[])
+    const {rooms,addRoom} = useChatContext()
     return <>
     <Box component="div" className="room-area">
         {rooms && rooms.map(room =>{
