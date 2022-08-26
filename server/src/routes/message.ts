@@ -12,8 +12,8 @@ messageRouter.get("/room",async(req,res)=>{
 })
 
 messageRouter.post("/create",async(req,res)=>{
-    const roomId = req.query.id as string
-    const {body} = req.query
+    const roomId = req.query.id
+    const {body} = req.body
     if(!body){
         return res.status(400).json({msg:"Please provide a message"})
     }

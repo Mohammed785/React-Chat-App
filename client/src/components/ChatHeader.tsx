@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react"
-import { useAuthContext } from "../context/authContext"
 import { useChatContext } from "../context/chatContext"
+import SearchInChat from "./SearchInChat"
 
 function ChatHeader(){
     const {selectedRoom} = useChatContext()
-    const {user} = useAuthContext()!
     const [roomInfo,setRoomInfo] = useState({name:"",avatar:""})
     const getRoomInfo = ()=>{
         if(selectedRoom?.is_group){
             setRoomInfo({name:selectedRoom.name,avatar:selectedRoom.avatar})
         } 
         else{
-            for (const member of selectedRoom!.members) {
-                if(member.member._id!==user?._id){
-                    setRoomInfo({name:member.member.username,avatar:member.member.avatar})
-                }
-            }
+            const f_idx = selectedRoom?.members[0].member?0:1
+            setRoomInfo({name:selectedRoom?.members[f_idx].member.username!,avatar:selectedRoom?.members[f_idx].member.avatar!})
         }
     }
     useEffect(()=>{

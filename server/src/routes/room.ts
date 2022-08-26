@@ -11,7 +11,7 @@ roomRouter.get("/rooms",async(req,res)=>{
     }}})
     for (const room of rooms) {
         if(!room.is_group){
-            await room.populate("members.member")
+            await room.populate({path:"members.member",match:{_id:{$ne:req.user?._id}}})
         }
         
     }
@@ -26,13 +26,20 @@ roomRouter.get("/:id/check-exists", async (req, res) => {
     return res.json({room})
 });
 
-roomRouter.post("/create/:id",async(req,res)=>{
-    const {id} = req.params
-    const friend = await User.findById(id)
+roomRouter.post("/create/:username",async(req,res)=>{
+    const {username} = req.params
+    const friend = await User.findOne({username})
+    if(username===req.user?.username){
+        return res.status(400).json({msg:"You can't chat with yourself "})
+    }
     if(!friend){
         return res.status(404).json({msg:"User not found!!"})
     }
-    const room = await Room.create({members:[{member:req.user?._id},{member:friend._id}]})
+    const exists = await Room.findOne({is_group:false,members:[{member:req.user?._id},{member:friend._id}]}) 
+    if(exists){
+        return res.status(400).json({msg:"Private chat already exists"})
+    }
+    const room = await (await Room.create({members:[{member:req.user?._id},{member:friend._id}]})).populate("members.member")
     return res.status(201).json({room,friend})
 })
 

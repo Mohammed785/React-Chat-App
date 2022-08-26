@@ -1,6 +1,5 @@
 import {Box,Avatar, Tooltip, IconButton} from "@mui/material"
 import img from "../img.jpg"
-import SearchForm from "./SearchForm"
 import LogoutIcon from '@mui/icons-material/Logout';
 import axiosClient from "../axios";
 import {useNavigate} from "react-router-dom"
@@ -17,7 +16,6 @@ function Header() {
     }
     return <>
         <Box component="div" className="header">
-            <SearchForm/>
             <Box component="div" flexDirection="row" className="user-info">
                 <Tooltip title="logout">
                     <IconButton onClick={handleLogout}>
