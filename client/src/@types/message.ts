@@ -4,4 +4,5 @@ export interface IMessage{
     room:string;
     body:string;
     createdAt:string;
+    search:boolean
 }

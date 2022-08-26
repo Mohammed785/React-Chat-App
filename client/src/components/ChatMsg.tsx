@@ -21,7 +21,10 @@ function ChatMessage({msg}:{msg:IMessage}){
         </div>
         <div className="chat-msg-content">
             <div className="chat-msg-text">{msg.body}</div>
-            
+            {/* <div className="chat-msg-text">
+            <img
+                src="https://media0.giphy.com/media/yYSSBtDgbbRzq/giphy.gif?cid=ecf05e47344fb5d835f832a976d1007c241548cc4eea4e7e&rid=giphy.gif" />
+            </div> */}
         </div>
     </div>
     </>

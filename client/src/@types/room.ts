@@ -11,4 +11,5 @@ export interface IRoom {
     avatar: string;
     members: IMember[];
     is_group: boolean;
+    search:boolean // this attribute help me to search the rooms
 }

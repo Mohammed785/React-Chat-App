@@ -17,7 +17,7 @@ function MessagesArea() {
     return <>
     <div className="chat-area-main">
         {msgs.map((msg)=>{
-            return <ChatMessage key={msg._id} msg={msg}/>
+            return (msg.search===undefined||msg.search) &&<ChatMessage key={msg._id} msg={msg}/>
         })}
     </div>
     </>

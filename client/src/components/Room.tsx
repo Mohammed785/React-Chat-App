@@ -2,7 +2,6 @@ import { useState,useEffect } from "react";
 import { Box, Typography, Avatar, Badge } from "@mui/material"
 import { styled } from '@mui/material/styles';
 import { IRoom } from "../@types/room"
-import { useAuthContext } from "../context/authContext";
 import moment from "moment"
 import { IUser } from "../@types/user";
 import { useChatContext } from "../context/chatContext";
@@ -40,14 +39,10 @@ const StyledBadge = styled(Badge, { shouldForwardProp: (prop) => prop !== "type"
 function Room({ room }: { room: IRoom }){
     const [friend, setFriend] = useState<IUser | undefined>(undefined)
     const [friendStatus,setFriendStatus] = useState("idle")
-    const {user} = useAuthContext()!
     const {selectedRoom,setSelectedRoom} = useChatContext()
     const {socket} = useSocketContext()
     const getFriendInfo = ()=>{
-        const friend = room.members.filter(member=>{
-            return member.member._id!==user!._id
-        })
-        setFriend(friend[0].member)
+        room.members[0].member?setFriend(room.members[0].member):setFriend(room.members[1].member)
     }
     const selectRoom = ()=>{
         setSelectedRoom(room)
@@ -80,9 +75,6 @@ function Room({ room }: { room: IRoom }){
                     {(room.is_group)?room.name:friend?.username}
                 </Box>
                 <Box component="div" className="msg-content">
-                    {/* <Typography variant="body1" className="msg-message">
-                        last message
-                    </Typography> */}
                     {(friend&&friendStatus==="offline") && <Typography variant="body1" className="msg-date">{moment(friend?.last_seen).fromNow()}</Typography>}
                 </Box>
             </Box>
