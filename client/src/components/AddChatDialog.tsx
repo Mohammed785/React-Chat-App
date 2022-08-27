@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import {Box, Dialog, DialogActions,DialogContent,Button, DialogContentText, DialogTitle,TextField,Alert,IconButton,Collapse} from "@mui/material"
+import {Box, Dialog, DialogActions,DialogContent,Button, DialogContentText, DialogTitle,TextField,Alert,IconButton,Collapse, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio} from "@mui/material"
 import { PhotoCamera } from "@mui/icons-material"
 import CloseIcon from '@mui/icons-material/Close';
 import axiosClient from "../axios"
@@ -12,7 +12,6 @@ interface Props{
     setOpen:(open:boolean)=>void;
     setAddGroup:(group:boolean)=>void;
 }
-
 function CreateGroupChat({add,setError,setOpen,setAddGroup}:Props){
     const [name,setName] = useState("")
     const [image, setImage] = useState<{ selected: File | undefined, preview: string }>({selected:undefined,preview:""})
@@ -62,7 +61,7 @@ function CreateGroupChat({add,setError,setOpen,setAddGroup}:Props){
                     margin="dense"
                     id="name"
                     name="name"
-                    label="name"
+                    label="Name"
                     type="text"
                     fullWidth
                     variant="standard"
@@ -88,19 +87,24 @@ function CreateGroupChat({add,setError,setOpen,setAddGroup}:Props){
 }
 
 function AddPrivateChat({add,setError,setOpen,setAddGroup}:Props){
-    const [username,setUsername] = useState("")
+    const [value,setValue] = useState("")
+    const [roomType,setRoomType] = useState("user")
     const handleClose = ()=>{
         setOpen(false)
-        setUsername("")
+        setValue("")
     }
     const addPrivateChat = async()=>{
         try {
-            if(!username){
+            if(!value){
                 return
             }
-            const {data:{room}} = await axiosClient.post(`room/create/${username}`)
-            console.log(room)
-            add(room)
+            if(roomType==="user"){
+                const {data:{room}} = await axiosClient.post(`room/create/${value}`)
+                add(room)
+            }else{
+                const {data:{room}} = await axiosClient.post(`room/join?id=${value}`)
+                add(room)
+            }
             handleClose()
         } catch (error) {
             if(axios.isAxiosError(error)){
@@ -111,33 +115,45 @@ function AddPrivateChat({add,setError,setOpen,setAddGroup}:Props){
         }
     }
     return <>
-            <DialogTitle>Start new private conversation</DialogTitle>
+            <DialogTitle>
+            {roomType==="user"?"Start new private conversation"
+                :"Join Group"
+            }     
+                </DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    Enter your friend username
+                    {roomType==="user"?"Enter your friend username"
+                    :"Enter group invitation code to join"
+                    }                    
                 </DialogContentText>
                 <TextField
                     autoFocus
                     margin="dense"
-                    id="username"
-                    name="username"
-                    label="username"
+                    id="value"
+                    name="value"
+                    label={`${roomType==="user"?"Username":"Invitation Code"}`}
                     type="text"
                     fullWidth
                     variant="standard"
-                    value={username}
-                    error={!username?true:false}
-                    helperText={!username?"You must pass a username":""}
-                    onChange={(e)=>setUsername(e.target.value)}/>
+                    value={value}
+                    error={!value?true:false}
+                    helperText={!value?"Can't be empty":""}
+                    onChange={(e)=>setValue(e.target.value)}/>
+                    <FormControl>
+                        <FormLabel>Room Type</FormLabel>
+                        <RadioGroup row value={roomType} onChange={(e)=>{setRoomType(e.target.value)}}>
+                            <FormControlLabel value="user" control={<Radio/>} label="User"/>
+                            <FormControlLabel value="group" control={<Radio/>} label="Group"/>
+                        </RadioGroup>
+                    </FormControl>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Close</Button>
                 <Button onClick={()=>{setAddGroup(true)}}>Create group</Button>
-                <Button onClick={addPrivateChat} variant="contained">Add</Button>
+                <Button onClick={addPrivateChat} variant="contained">{roomType==="user"?"Add":"Join"}</Button>
             </DialogActions>
     </>
 }
-
 function AddChatDialog({add}:{add:(room:IRoom)=>void}){
     const [open,setOpen] = useState(false)
     const [addGroup,setAddGroup] = useState(false)

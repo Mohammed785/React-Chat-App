@@ -58,8 +58,8 @@ roomRouter.post("/group/create", uploader.single("image"), async (req, res) => {
 });
 
 roomRouter.post("/join",async(req,res)=>{
-    const {roomId,userId} = req.query
-    const room = await Room.findByIdAndUpdate(roomId,{$push:{members:{member:userId}}})
+    const {id} = req.query
+    const room = await Room.findByIdAndUpdate(id,{$push:{members:{member:req.user?._id}}})
     return res.json({room})
 })
 
@@ -71,4 +71,10 @@ roomRouter.get("/:id/members",async(req,res)=>{
     }
     const members = room.members
     return res.json({members})
+})
+
+roomRouter.delete("/:id/leave",async(req,res)=>{
+    const roomId = req.params.id
+    const room = await Room.findByIdAndUpdate(roomId,{$pull:{members:{member:req.user?._id}}},{new:true})
+    return res.json({room})
 })
