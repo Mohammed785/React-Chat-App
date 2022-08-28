@@ -14,8 +14,10 @@ const MessageSchema = new Schema<IMessage>(
         },
         body: {
             type: String,
-            required: [true, "Please provide a message"],
         },
+        image: {
+            type: String,
+        }
     },
     { timestamps: true }
 );
