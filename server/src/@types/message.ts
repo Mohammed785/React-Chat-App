@@ -4,7 +4,9 @@ import { IUser } from "./user";
 export interface IMessage{
     from:Types.ObjectId;
     room:Types.ObjectId;
-    body:string
+    body?:string,
+    image?:string,
+    audio:string
 }
 
 export interface IMessageUser{

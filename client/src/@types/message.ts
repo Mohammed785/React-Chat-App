@@ -6,5 +6,6 @@ export interface IMessage{
     createdAt:string;
     search:boolean;
     image?:string
-    uploadedImg?:boolean
+    audio?:string
+    uploaded?:boolean
 }

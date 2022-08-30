@@ -1,40 +1,11 @@
 import { useState,useEffect } from "react";
-import { Box, Typography, Avatar, Badge } from "@mui/material"
-import { styled } from '@mui/material/styles';
+import { Box, Typography, Avatar } from "@mui/material"
 import { IRoom } from "../@types/room"
 import moment from "moment"
 import { IUser } from "../@types/user";
 import { useChatContext } from "../context/chatContext";
 import { useSocketContext } from "../context/socketContext";
-
-const StyledBadge = styled(Badge, { shouldForwardProp: (prop) => prop !== "type" })<{ type: string }>(({ theme, type }) => ({
-    '& .MuiBadge-badge': {
-        backgroundColor: type === "online" ? '#44b700' : type === "offline" ? "#be2323" : "#808080",
-        color: type === "online" ? '#44b700' : type === "offline" ? "#be2323" : "#808080",
-        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-        '&::after': {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            borderRadius: '50%',
-            animation: 'ripple 1.2s infinite ease-in-out',
-            border: '1px solid currentColor',
-            content: '""',
-        },
-    },
-    '@keyframes ripple': {
-        '0%': {
-            transform: 'scale(.8)',
-            opacity: 1,
-        },
-        '100%': {
-            transform: 'scale(2.4)',
-            opacity: 0,
-        },
-    },
-}));
+import StyledBadge from "./StyledBadge";
 
 function Room({ room }: { room: IRoom }){
     const [friend, setFriend] = useState<IUser | undefined>(undefined)

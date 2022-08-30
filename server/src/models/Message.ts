@@ -17,6 +17,9 @@ const MessageSchema = new Schema<IMessage>(
         },
         image: {
             type: String,
+        },
+        audio:{
+            type: String
         }
     },
     { timestamps: true }

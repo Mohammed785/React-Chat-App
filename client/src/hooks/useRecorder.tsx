@@ -20,25 +20,26 @@ function useRecorder(){
     },[mediaState.mediaStream])
     
     useEffect(()=>{
-        if(!mediaState.mediaRecorder)return
-        const recorder = mediaState.mediaRecorder
-        let chunks:Blob[] = []
-        if(recorder&&recorder.state==="inactive"){
-            recorder.start()
-            recorder.ondataavailable = (e)=>{
-                chunks.push(e.data)
-            }
-            recorder.onstop = ()=>{
-                const blob = new Blob(chunks,{type:"audio/ogg; codec=opus"})
-                chunks = []
-                if(mediaState.mediaRecorder){
-                    setMediaState({...mediaState,data:blob,init:false})
-                }else{
-                    setMediaState(initialState)
+        if(mediaState.mediaRecorder){
+            const recorder = mediaState.mediaRecorder
+            let chunks:Blob[] = []
+            if(recorder&&recorder.state==="inactive"){
+                recorder.start()
+                recorder.ondataavailable = (e)=>{
+                    chunks.push(e.data)
+                }
+                recorder.onstop = ()=>{
+                    const blob = new Blob(chunks,{type:"audio/ogg; codec=opus"})
+                    chunks = []
+                    if(mediaState.mediaRecorder){
+                        setMediaState({...mediaState,data:blob,init:false})
+                    }else{
+                        setMediaState(initialState)
+                    }
                 }
             }
+            return ()=>{recorder.stream.getAudioTracks().forEach(track=>track.stop())}
         }
-        return ()=>{recorder&&recorder.stream.getAudioTracks().forEach(track=>track.stop())}
     },[mediaState.mediaRecorder])
     
     const startRecord = async()=>{
@@ -54,11 +55,11 @@ function useRecorder(){
         }
     }
     
-    const saveRecord = ()=>{
+    const stopRecord = ()=>{
         mediaState.mediaRecorder?.stop()
         mediaState.mediaStream?.getAudioTracks().forEach(track=>track.stop())
     }
-    return {mediaState,setMediaState,startRecord,saveRecord}
+    return {mediaState,setMediaState,startRecord,stopRecord}
 }
 
 export default useRecorder;
