@@ -1,6 +1,5 @@
 import { FormEvent, useState } from "react"
 import { InputBase, IconButton, InputAdornment, Tooltip } from "@mui/material"
-import Mic from "@mui/icons-material/Mic"
 import Send from "@mui/icons-material/Send"
 import axiosClient from "../axios"
 import { useChatContext } from "../context/chatContext"
@@ -8,6 +7,7 @@ import { useAuthContext } from "../context/authContext"
 import { useSocketContext } from "../context/socketContext"
 import EmojiPicker from "./EmojiPicker"
 import SendImage from "./SendImage"
+import SendVoiceMsg from "./SendVoiceMsg"
 
 function ChatForm(){
    const [msg,setMsg] = useState("")
@@ -34,11 +34,7 @@ function ChatForm(){
     return <>
     <div className="chat-area-footer">      
       <SendImage {...{msg,setMsg,handleSendMsg}}/>
-      <Tooltip title="Voice msg">
-      <IconButton>
-         <Mic/>
-      </IconButton>
-      </Tooltip>
+      <SendVoiceMsg add={addMsg}/>
       <form method="POST" onSubmit={handleSendMsg} className="msg-inp">
          <InputBase value={msg} onChange={(e)=>{setMsg(e.target.value)}} name="body" id="body" required fullWidth placeholder="Type something here..." endAdornment={<InputAdornment position="end">
             <Tooltip title="Send"><IconButton type="submit"  aria-label="Send message" edge="end"><Send/></IconButton></Tooltip>

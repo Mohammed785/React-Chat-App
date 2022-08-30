@@ -19,7 +19,7 @@ export const uploader = multer({
     storage,
     limits:{fileSize:4*1024*1024},
     fileFilter(req, file, callback) {
-        if(file.mimetype==="image/png"||file.mimetype==="image/jpg"||file.mimetype==="image/jpeg"){
+        if(file.mimetype==="image/png"||file.mimetype==="image/jpg"||file.mimetype==="image/jpeg"||file.mimetype==="audio/ogg"){
             callback(null,true)
         }else{
             callback(null,false)
