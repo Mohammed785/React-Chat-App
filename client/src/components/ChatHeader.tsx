@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useChatContext } from "../context/chatContext"
-import SearchInChat from "./SearchInChat"
 
 function ChatHeader(){
     const {selectedRoom} = useChatContext()
@@ -19,7 +18,7 @@ function ChatHeader(){
     },[selectedRoom])
     return <>
     <div className="chat-area-header">
-        <img className="chat-area-profile" src={process.env.REACT_APP_STATIC_PATH+roomInfo.avatar} alt={roomInfo.name+" avatar"} />
+        <img className="chat-area-profile" src={process.env.REACT_APP_STATIC_PATH+"avatars/"+roomInfo.avatar} alt={roomInfo.name+" avatar"} />
         <div className="chat-area-title">{roomInfo.name}</div>
     </div>
     </>

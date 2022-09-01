@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../context/authContext";
 
 function ChatDetails(){
-    const {selectedRoom} = useChatContext()
+    const {selectedRoom,getFriendInfo} = useChatContext()
     const [isAdmin,setIsAdmin] = useState(false)
     const {user} = useAuthContext()!
     useEffect(()=>{
@@ -25,7 +25,7 @@ function ChatDetails(){
     return <>
         <div className="detail-area-header">
             <div className="msg-profile group">
-            <img src={process.env.REACT_APP_STATIC_PATH!+selectedRoom?.avatar} alt="avatar" />
+            <img src={`${process.env.REACT_APP_STATIC_PATH+"avatars/"}${selectedRoom?.is_group?selectedRoom?.avatar:getFriendInfo(selectedRoom!).avatar}`} alt="avatar" />
             </div>
             <div className="detail-title">{selectedRoom?.name}</div>
             <div className="detail-buttons">

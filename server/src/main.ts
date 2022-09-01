@@ -25,6 +25,8 @@ const server = createServer(app)
 const io = new Server(server,{cors:{origin:true}})
 app.use(cors({credentials:true,origin:true}))
 app.use("/static",express.static(join(__dirname,"..","public")))
+app.use("/avatars",express.static(join(__dirname,"..","public","avatars")))
+app.use("/messages",express.static(join(__dirname,"..","public","messages")))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 setPassport(passport)
@@ -44,7 +46,7 @@ app.use(passport.session())
 app.use("/",authRouter)
 app.use("/message",authMiddleware,messageRouter)
 app.use("/room",authMiddleware,roomRouter)
-app.use("/",authMiddleware,userRouter)
+app.use("/user",authMiddleware,userRouter)
 const start = async () => {
     try {
         await connect(process.env.MONGO_URI);

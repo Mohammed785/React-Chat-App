@@ -18,7 +18,7 @@ messageRouter.post("/create",uploader.single("image"),async(req,res)=>{
     if(!body && !req.file){
         return res.status(400).json({msg:"Please provide a text or image message"})
     }
-    if((roomId && !Types.ObjectId.isValid(roomId as string)) || roomId){
+    if((roomId && !Types.ObjectId.isValid(roomId as string)) || !roomId){
         return res.status(400).json({msg:"Invalid room id"})
     }
     if(req.file){

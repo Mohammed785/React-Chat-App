@@ -9,15 +9,24 @@ class Connection{
     constructor(io: Server<ClientToServerEvents, ServerToClientEvents>,socket: Socket<ClientToServerEvents, ServerToClientEvents>){
         this.io = io
         this.socket = socket
+
         socket.on("connected",(userId)=>{
             socket.data.userId= userId
-            redisClient.set(userId,JSON.stringify({socketId:socket.id,status:"online"})).then((value)=>{
-                
+            redisClient.set(userId,JSON.stringify({socketId:socket.id,status:"online"}),(err,val)=>{
+                if(err){
+                    console.log(err)
+                }else{
+                }
             })
         })
         socket.on("isConnected",(userId)=>{
-            redisClient.get(userId).then((value)=>{
-                socket.emit("IsConnected",value?JSON.parse(value).status:"offline")
+            redisClient.get(userId,(err,value)=>{
+                if(err || !value){
+                    socket.emit("IsConnected","offline",userId)
+                }
+                if(value){                  
+                    socket.emit("IsConnected",JSON.parse(value).status,userId)
+                }
             })
         })
         socket.on("joinRoom",(rooms)=>{
@@ -33,7 +42,14 @@ class Connection{
             socket.to("global").emit("msg",msg,"global")
         })
         socket.on("disconnect",()=>{
-            redisClient.del(socket.data.userId).then((value)=>{})
+            redisClient.del(socket.data.userId,(err,value)=>{
+                if(err){
+                    console.log(err)
+                }
+                if(value){
+                }
+            })
+
         })
     }
 }

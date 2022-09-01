@@ -19,13 +19,13 @@ function ChatForm(){
       try {
          const formData = new FormData(e.currentTarget as HTMLFormElement)
          image&&formData.set("image",image)
-         const {data:{message}} = await axiosClient.post(`message/create?id=${selectedRoom&&selectedRoom._id}`,formData)   
          setMsg("")
+         const {data:{message}} = await axiosClient.post(`message/create?id=${selectedRoom&&selectedRoom._id}`,formData)   
          addMsg({...message,image:image?URL.createObjectURL(image):null,uploadedImg:image?true:false,from:{...user}})
          socket?.emit("privateMsg",{...message,from:{...user}},selectedRoom?._id)
       } catch (error) {
          setMsg("")
-         console.error(error);         
+         console.error(error);
       }
    }
    const addEmoji = (emoji:string)=>{

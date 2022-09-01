@@ -1,7 +1,7 @@
 import { IMessageUser } from "./message"
 
 export interface ServerToClientEvents {
-    IsConnected:(status:"online"|"offline"|"idle")=>void
+    IsConnected:(status:"online"|"offline"|"idle",userId:string)=>void
     msg:(msg:IMessageUser,room:string)=>void
 }
 

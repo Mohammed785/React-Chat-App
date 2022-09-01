@@ -5,6 +5,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import axiosClient from "../axios"
 import {IRoom} from "../@types/room"
 import axios from "axios";
+import { useSocketContext } from "../context/socketContext";
+import { useAuthContext } from "../context/authContext";
 
 interface Props{
     add:(room:IRoom)=>void;
@@ -26,7 +28,7 @@ function CreateGroupChat({add,setError,setOpen,setAddGroup}:Props){
                 data.append("name",name)
                 data.append("image",image.selected!)
                 const { data: { room } } = await axiosClient.post("/room/group/create",data)
-                handleClose()
+                setOpen(false)
                 add(room)
             }catch(error){
                 console.error(error)
@@ -39,11 +41,6 @@ function CreateGroupChat({add,setError,setOpen,setAddGroup}:Props){
         }else{
             setImage({...image,selected:undefined})
         }
-    }
-    const handleClose = ()=>{
-        setName("")
-        setImage({selected:undefined,preview:""})
-        setOpen(false)
     }
     useEffect(()=>{
         const url = image.selected ? URL.createObjectURL(image.selected):""
@@ -79,7 +76,7 @@ function CreateGroupChat({add,setError,setOpen,setAddGroup}:Props){
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Close</Button>
+                <Button onClick={()=>{setOpen(false)}}>Close</Button>
                 <Button onClick={()=>{setAddGroup(false)}}>Start Private</Button>
                 <Button onClick={addNewConversation} variant="contained">Add</Button>
             </DialogActions>
@@ -89,10 +86,8 @@ function CreateGroupChat({add,setError,setOpen,setAddGroup}:Props){
 function AddPrivateChat({add,setError,setOpen,setAddGroup}:Props){
     const [value,setValue] = useState("")
     const [roomType,setRoomType] = useState("user")
-    const handleClose = ()=>{
-        setOpen(false)
-        setValue("")
-    }
+    const {socket} = useSocketContext()
+    const {user} = useAuthContext()!
     const addPrivateChat = async()=>{
         try {
             if(!value){
@@ -102,13 +97,14 @@ function AddPrivateChat({add,setError,setOpen,setAddGroup}:Props){
                 const {data:{room}} = await axiosClient.post(`room/create/${value}`)
                 add(room)
             }else{
-                const {data:{room}} = await axiosClient.post(`room/join?id=${value}`)
+                const {data:{room}} = await axiosClient.post(`room/${value}/join`)
                 add(room)
+                socket?.emit("joinGroup",room._id,`${user?.username} joined the group`)
             }
-            handleClose()
+            setOpen(false)
         } catch (error) {
             if(axios.isAxiosError(error)){
-                const msg = (error.response?.data as Record<string ,any>).msg
+                const msg = (error.response?.data as Record<string ,any>).msg||"Something went wrong please check entered code"
                 setError({isError:true,error:msg})
                 console.error(error);            
             }
@@ -148,7 +144,7 @@ function AddPrivateChat({add,setError,setOpen,setAddGroup}:Props){
                     </FormControl>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Close</Button>
+                <Button onClick={()=>{setOpen(false)}}>Close</Button>
                 <Button onClick={()=>{setAddGroup(true)}}>Create group</Button>
                 <Button onClick={addPrivateChat} variant="contained">{roomType==="user"?"Add":"Join"}</Button>
             </DialogActions>

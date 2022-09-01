@@ -22,15 +22,20 @@ function Room({ room }: { room: IRoom }){
     useEffect(()=>{
         if(!room.is_group){
             getFriendInfo()
-            socket?.on("IsConnected",setFriendStatus)
-            return ()=>{socket?.off("isConnected",setFriendStatus)}
         }
     },[])
     useEffect(()=>{
-        if(friend){
-            socket?.emit("isConnected",friend._id)
+        function setConnection(status:string,userId:string){
+            if(userId===friend?._id){
+                setFriendStatus(status)
+            }
         }
-    },[friend])
+        if(friend && !room.is_group){          
+            socket?.emit("isConnected",friend._id)
+            socket?.on("IsConnected",setConnection)
+            return ()=>{socket?.off("IsConnected",setConnection)}
+        }
+    },[friend,selectRoom])
     return <>
         <Box component="div" onClick={()=>{selectRoom()}} className={`msg ${(selectedRoom&&room._id===selectedRoom._id)&&"active"}`}>
             <StyledBadge
@@ -39,7 +44,7 @@ function Room({ room }: { room: IRoom }){
                 variant="dot"
                 type={friendStatus}
             >
-                <Avatar alt="avatar" src={`${process.env.REACT_APP_STATIC_PATH}${room.is_group?room.avatar:friend?.avatar}`} />
+                <Avatar alt="avatar" src={`${process.env.REACT_APP_STATIC_PATH}avatars/${room.is_group?room.avatar:friend?.avatar}`} />
             </StyledBadge>
             <Box component="div" className="msg-detail">
                 <Box component="div" className="msg-username">
