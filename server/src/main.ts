@@ -17,8 +17,9 @@ import {createServer} from "http"
 import {Server} from "socket.io"
 import { join } from "path"
 import {redisClient,setSocket} from "./socket"
-let RedisStore = connectRedis(session)
+import ErrorHandler from "./middleware/errorHandler"
 
+let RedisStore = connectRedis(session)
 
 const app = express()
 const server = createServer(app)
@@ -47,6 +48,7 @@ app.use("/",authRouter)
 app.use("/message",authMiddleware,messageRouter)
 app.use("/room",authMiddleware,roomRouter)
 app.use("/user",authMiddleware,userRouter)
+app.use(ErrorHandler)
 const start = async () => {
     try {
         await connect(process.env.MONGO_URI);
