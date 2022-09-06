@@ -7,13 +7,19 @@ import ChatMessage from "./ChatMsg"
 function MessagesArea() {
     const {socket} = useSocketContext()
     const {msgs,addMsg} = useChatContext()
+    const {selectedRoom,updateNotSeenMsgs} = useChatContext()
     useEffect(()=>{
         function add(msg:IMessage,room:string){
-            addMsg(msg)
+            
+            if(selectedRoom?._id===room){
+                addMsg(msg)
+            }else{
+                updateNotSeenMsgs(room)
+            }
         }
         socket?.on("msg",add)
         return ()=>{socket?.off("msg",add)}
-    },[])
+    },[selectedRoom])
     return <>
     <div className="chat-area-main">
         {msgs.map((msg)=>{

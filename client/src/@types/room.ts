@@ -12,4 +12,5 @@ export interface IRoom {
     members: IMember[];
     is_group: boolean;
     search:boolean // this attribute help me to search the rooms
+    notSeen:number
 }

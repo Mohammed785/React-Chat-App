@@ -1,4 +1,5 @@
 import { Router } from "express";
+import Message from "../models/Message";
 import Room from "../models/Room";
 import User from "../models/User";
 import { uploader } from "../utils"
@@ -78,4 +79,9 @@ roomRouter.delete("/:id/leave",async(req,res)=>{
     const roomId = req.params.id
     const room = await Room.findByIdAndUpdate(roomId,{$pull:{members:{member:req.user?._id}}},{new:true})
     return res.json({room})
+})
+
+roomRouter.get("/:id/images",async(req,res)=>{
+    const images = (await Message.find({image:{$exists:true}}).select("image")).map(img=>img.image)
+    return res.json({images})
 })

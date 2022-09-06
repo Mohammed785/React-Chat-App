@@ -5,6 +5,7 @@ import { IUser } from "../@types/user";
 import axiosClient from "../axios";
 
 type AuthContextType = {
+    rooms:IRoom[]
     selectedRoom:IRoom|undefined
     msgs:IMessage[]
     msgsAreaRef:RefObject<HTMLDivElement>|undefined
@@ -12,15 +13,34 @@ type AuthContextType = {
     setMsgs:(msgs:IMessage[])=>void
     addMsg:(msg:IMessage)=>void
     getFriendInfo:(room:IRoom)=>IUser
+    setRooms:(rooms:IRoom[])=>void
+    addRoom:(room:IRoom)=>void
+    updateNotSeenMsgs:(roomId:string)=>void
 }
 
-const ChatContext = createContext<AuthContextType>({selectedRoom:undefined,msgs:[],msgsAreaRef:undefined,
-    setSelectedRoom(room) {},setMsgs(msgs) {},addMsg(msg) {},getFriendInfo(room) {return room.members[0].member}})
+const ChatContext = createContext<AuthContextType>({rooms:[],selectedRoom:undefined,msgs:[],msgsAreaRef:undefined,
+    setRooms(rooms) {},addRoom(room) {},setSelectedRoom(room) {},setMsgs(msgs) {},
+    addMsg(msg) {},getFriendInfo(room) {return room.members[0].member},updateNotSeenMsgs(roomId) {}})
 
 function ChatProvider({children}:{children:JSX.Element}){
     const [selectedRoom,setSelectedRoom] = useState<IRoom|undefined>(undefined)
     const [msgs,setMsgs] = useState<IMessage[]>([])
     const msgsAreaRef = useRef<HTMLDivElement>(null)
+    const [rooms,setRooms] = useState<IRoom[]>([])
+    const addRoom = (room:IRoom)=>{
+        setRooms([...rooms, room])
+    }
+    const getRooms = async()=>{
+        try{    
+            const {data:{rooms}} = await axiosClient.get("/room/rooms")
+            setRooms(rooms)
+        }catch(error){
+            console.error(error)
+        }
+    }
+    useEffect(()=>{
+        getRooms()
+    },[])
     const getChatMsgs = async()=>{
         try {
            const {data:messages} = await axiosClient.get(`message/room?id=${selectedRoom!._id}`)
@@ -31,7 +51,17 @@ function ChatProvider({children}:{children:JSX.Element}){
     }
     const addMsg = (msg:IMessage)=>{
         setMsgs((prev)=>{
-           return [...prev,msg]
+            return [...prev,msg]
+        })
+    }
+    const updateNotSeenMsgs = (roomId:string)=>{
+        setRooms((prev)=>{
+            return prev.map((room)=>{
+                if(roomId===room._id){
+                    return {...room,notSeen:room.notSeen?room.notSeen+1:1}
+                }
+                return room
+            })
         })
     }
     useEffect(()=>{
@@ -45,7 +75,7 @@ function ChatProvider({children}:{children:JSX.Element}){
     useEffect(()=>{
         selectedRoom && getChatMsgs()
      },[selectedRoom])
-    return <ChatContext.Provider value={{selectedRoom,msgs,msgsAreaRef,setSelectedRoom,setMsgs,addMsg,getFriendInfo}}>
+    return <ChatContext.Provider value={{rooms,selectedRoom,msgs,msgsAreaRef,setRooms,addRoom,setSelectedRoom,setMsgs,addMsg,getFriendInfo,updateNotSeenMsgs}}>
         {children}
     </ChatContext.Provider>
 }

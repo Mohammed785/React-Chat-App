@@ -8,14 +8,17 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Home from "./pages/Home"
 import { ChatProvider } from "./context/chatContext"
 import { SocketProvider } from "./context/socketContext"
+import { PeerProvider } from "./context/peerContext"
 
 function Main(){
     return <>
         <ChatProvider>
             <SocketProvider>
-            <ProtectedRoute>
-                <Outlet/>
-                </ProtectedRoute>
+                <PeerProvider>
+                    <ProtectedRoute>
+                        <Outlet/>
+                    </ProtectedRoute>
+                </PeerProvider>
             </SocketProvider>
         </ChatProvider>
     </>

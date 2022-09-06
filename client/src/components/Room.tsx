@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import { Box, Typography, Avatar } from "@mui/material"
+import { Box, Typography, Avatar, Badge } from "@mui/material"
 import { IRoom } from "../@types/room"
 import moment from "moment"
 import { IUser } from "../@types/user";
@@ -17,12 +17,12 @@ function Room({ room }: { room: IRoom }){
     }
     const selectRoom = ()=>{
         setSelectedRoom(room)
-        socket?.emit("joinRoom",room._id)
     }
     useEffect(()=>{
         if(!room.is_group){
             getFriendInfo()
         }
+        socket?.emit("joinRoom",room._id)
     },[])
     useEffect(()=>{
         function setConnection(status:string,userId:string){
@@ -43,7 +43,7 @@ function Room({ room }: { room: IRoom }){
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
                 type={friendStatus}
-            >
+                >
                 <Avatar alt="avatar" src={`${process.env.REACT_APP_STATIC_PATH}avatars/${room.is_group?room.avatar:friend?.avatar}`} />
             </StyledBadge>
             <Box component="div" className="msg-detail">
@@ -54,6 +54,8 @@ function Room({ room }: { room: IRoom }){
                     {(friend&&friendStatus==="offline") && <Typography variant="body1" className="msg-date">{moment(friend?.last_seen).fromNow()}</Typography>}
                 </Box>
             </Box>
+            <Badge className="notSeen" badgeContent={room?.notSeen&&room.notSeen} max={999} color="primary">
+            </Badge>
         </Box>
     </>
 }

@@ -1,10 +1,10 @@
 import {Button} from "@mui/material";
 import { useChatContext } from "../context/chatContext";
-import Videocam from "@mui/icons-material/Videocam"
 import Call from "@mui/icons-material/Call"
 import LeaveGroup from "./LeaveGroup";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../context/authContext";
+import VideoCall from "./VideoCall";
 
 function ChatDetails(){
     const {selectedRoom,getFriendInfo} = useChatContext()
@@ -29,12 +29,14 @@ function ChatDetails(){
             </div>
             <div className="detail-title">{selectedRoom?.name}</div>
             <div className="detail-buttons">
-                <Button variant="contained" className="detail-button" startIcon={<Call/>} >
-                    Audio
-                </Button>
-                <Button variant="contained" className="detail-button" startIcon={<Videocam/>} >
-                    Video
-                </Button>
+                {
+                    !selectedRoom?.is_group&&<>
+                    <Button variant="contained" className="detail-button" startIcon={<Call/>} >
+                        Audio
+                    </Button>
+                    <VideoCall userId={getFriendInfo(selectedRoom!)._id}/>
+                    </>
+                }
             </div>
             {
                 isAdmin&&<Button variant="contained" onClick={()=>{navigator.clipboard.writeText(selectedRoom!._id)}} color="success" fullWidth className="" sx={{marginTop:"10px"}} >
