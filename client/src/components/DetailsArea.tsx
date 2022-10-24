@@ -1,6 +1,7 @@
 import ChatDetails from "./ChatDetails"
 import SharedPhotos from "./ChatSharedPhotos";
 import SearchInChat from "./SearchInChat";
+import GroupMembers from "./GroupMembers";
 
 function DetailsArea(){
     return <>
@@ -9,7 +10,8 @@ function DetailsArea(){
         <div className="detail-changes">
             <SearchInChat/>
         </div>
-           <SharedPhotos/>
+        <GroupMembers/>
+        <SharedPhotos/>
     </div>
     </>
 }

@@ -81,6 +81,12 @@ roomRouter.delete("/:id/leave",async(req,res)=>{
     return res.json({room})
 })
 
+roomRouter.delete("/:roomId/kick/:memberId",async(req,res)=>{
+    const {roomId,memberId} = req.params
+    await Room.findByIdAndUpdate(roomId,{$pull:{members:{member:memberId}}})
+    return res.status(200).json({msg:"Member Kicked"})
+})
+
 roomRouter.get("/:id/images",async(req,res)=>{
     const images = (await Message.find({image:{$exists:true}}).select("image")).map(img=>img.image)
     return res.json({images})

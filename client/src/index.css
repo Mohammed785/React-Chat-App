@@ -475,7 +475,6 @@ img {
 }
 
 .detail-photos {
-    margin-top: 30px;
     text-align: center;
 }
 
@@ -534,4 +533,38 @@ img {
 .notSeen{
     position: absolute!important;
     right:10%
+}
+
+
+.member{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+    padding: 5px;
+}
+.member:not(:last-child){
+    border-bottom: 1px solid var(--border-color);
+}
+.m-info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 3em;
+}
+.m-info img{
+    width:45px;
+    height:45px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.m-info p{
+    font-size: 17px;
+    margin-left: 5px;
+}
+
+.member button{
+    margin:0 8px;
 }
